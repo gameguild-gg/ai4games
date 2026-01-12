@@ -1,0 +1,56 @@
+name: AI4Games Tests
+
+on:
+  push:
+    branches: [main, master, develop]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test ${{ matrix.module }} on Ubuntu
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [flocking, life, maze, rng, fsm]
+        include:
+          - module: flocking
+            test_executable: flocking-tests
+            test_path: src/flocking
+          - module: life
+            test_executable: life-tests
+            test_path: src/life
+          - module: maze
+            test_executable: maze-tests
+            test_path: src/maze
+          - module: rng
+            test_executable: rng-tests
+            test_path: src/rng
+          - module: fsm
+            test_executable: fsm-tests
+            test_path: src/fsm
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "3.20"
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build ${{ matrix.module }} test target
+        run: cmake --build build --target ${{ matrix.test_executable }} --config Release
+
+      - name: Test
+        working-directory: build
+        run: ctest --output-on-failure --build-config Release -R ${{ matrix.test_executable }}
+
+      - name: Run ${{ matrix.module }} tests specifically
+        working-directory: build
+        run: |
+          ./out/${{ matrix.module }}/${{ matrix.test_executable }} --success --verbose

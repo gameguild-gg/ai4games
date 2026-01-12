@@ -1,0 +1,7 @@
+add_subdirectory(fsm)
+add_subdirectory(bt)
+add_subdirectory(flocking)
+add_subdirectory(maze)
+add_subdirectory(life)
+add_subdirectory(rng)
+#add_subdirectory(catchthecat)
