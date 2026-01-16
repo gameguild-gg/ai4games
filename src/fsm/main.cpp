@@ -7,6 +7,7 @@
 #include "fsm.h"
 #include <iostream>
 #include <string>
+#include <MemoryLeakDetector.h>
 
 int main()
 {

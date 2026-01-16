@@ -11,6 +11,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <MemoryLeakDetector.h>
 
 namespace fs = std::filesystem;
 
