@@ -6,6 +6,8 @@
 #include <memory>
 #include <functional>
 #include <sstream>
+#include <stdexcept>
+#include <MemoryLeakDetector.h>
 
 namespace FSM
 {

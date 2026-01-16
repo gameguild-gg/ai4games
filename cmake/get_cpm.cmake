@@ -6,17 +6,8 @@ else()
   message(FATAL "Git not found. Please install git before continuing. This project needs git in your path in order to work properly.")
 endif()
 
-# find latest version of CPM
-IF(NOT (EXISTS ${CMAKE_BINARY_DIR}/cmake.release.json))
-  message(STATUS "Fetching CPM latest release")
-  file(DOWNLOAD
-        "https://api.github.com/repos/cpm-cmake/CPM.cmake/releases/latest"
-        "${CMAKE_BINARY_DIR}/cmake.release.json"
-        SHOW_PROGRESS
-  )
-endif()
-file(READ "${CMAKE_BINARY_DIR}/cmake.release.json" CPM_RELEASE)
-string(JSON CPM_DOWNLOAD_VERSION GET ${CPM_RELEASE} tag_name)
+# todo: get the latest release version automatically
+set(CPM_DOWNLOAD_VERSION "v0.42.0")
 message(STATUS "Using CPM version ${CPM_DOWNLOAD_VERSION}")
 
 # Set CPM module download location

@@ -74,13 +74,20 @@ static std::vector<std::pair<std::string, std::string>> findTestFiles()
 {
     std::vector<std::pair<std::string, std::string>> files;
     fs::path cwd = fs::current_path();
+
+    // Get the path to the source file to find tests relative to it
+    fs::path exePath = fs::path(__FILE__).parent_path();
+
     std::vector<fs::path> candidates = {
         cwd / "tests",
+        cwd / "out" / "bt" / "tests", // Build output directory
         cwd / "bt" / "tests",
         cwd / "src" / "bt" / "tests",
+        cwd / ".." / "tests",
         cwd / ".." / "bt" / "tests",
         cwd / ".." / "src" / "bt" / "tests",
-        cwd / ".." / ".." / "src" / "bt" / "tests"};
+        cwd / ".." / ".." / "src" / "bt" / "tests",
+        exePath / "tests"}; // Relative to source file location
 
     fs::path testsDir;
     for (const auto &p : candidates)
