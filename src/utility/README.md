@@ -53,18 +53,17 @@ The key insight: **Inverted** input means low values should score high. For hung
 
 ## Input/Output Format
 
-Input: First line `hunger=<int> energy=<int> health=<int> distance=<int>`, then commands per line:
+Input: First line `hunger=<int> energy=<int> health=<int>`, then commands per line:
 
 - `hunger=<N>` — Update hunger level (0-100, 0=starving, 100=full)
 - `energy=<N>` — Update energy level (0-100, 0=exhausted, 100=energized)
 - `health=<N>` — Update health level (0-100, 0=dying, 100=perfect)
-- `distance=<N>` — Update distance to nearest resource (0-100)
 - `decide` — Select and print best action: `ACTION:<name> UTILITY:<score>` with score formatted to 4 decimal places
 
 Example:
 
 ```
-hunger=80 energy=30 health=50 distance=20
+hunger=80 energy=30 health=50
 decide
 hunger=20
 decide
