@@ -23,6 +23,15 @@ CPMAddPackage("gh:doctest/doctest@2.4.12")
 message("Git clonning Format...")
 CPMAddPackage("gh:TheLartians/Format.cmake@1.8.3")
 
+message("Downloading SDL3, please do not abort...")
+CPMAddPackage("gh:libsdl-org/SDL#release-3.4.0")
+
+message("Downloading SDL3_image, please do not abort...")
+CPMAddPackage("gh:libsdl-org/SDL_image#release-3.4.0")
+
+message("Downloading ImGUI... this one should be fast...")
+CPMAddPackage("gh:ocornut/imgui@1.92.5")
+
 # Enable testing
 enable_testing()
 

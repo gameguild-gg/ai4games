@@ -1,5 +1,6 @@
 add_subdirectory(fsm)
 add_subdirectory(bt)
+add_subdirectory(utility)
 add_subdirectory(flocking)
 add_subdirectory(maze)
 add_subdirectory(life)

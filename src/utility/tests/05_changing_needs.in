@@ -1,0 +1,8 @@
+hunger=90 energy=90 health=90
+decide
+hunger=10
+decide
+energy=10
+decide
+health=10
+decide

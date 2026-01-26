@@ -7,7 +7,7 @@ else()
 endif()
 
 # todo: get the latest release version automatically
-set(CPM_DOWNLOAD_VERSION "v0.42.0")
+set(CPM_DOWNLOAD_VERSION "v0.42.1")
 message(STATUS "Using CPM version ${CPM_DOWNLOAD_VERSION}")
 
 # Set CPM module download location
