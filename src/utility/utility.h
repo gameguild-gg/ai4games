@@ -50,7 +50,7 @@ namespace Utility
     public:
         float evaluate(float x) const override
         {
-            // TODO: Return x squared
+            // TODO: Return x squared (x * x)
             throw std::runtime_error("Quadratic::evaluate not implemented");
         }
     };
@@ -63,6 +63,7 @@ namespace Utility
         float evaluate(float x) const override
         {
             // TODO: Return 1 - (1-x)²
+            // Hint: Calculate (1-x) first, square it, then subtract from 1
             throw std::runtime_error("InverseQuadratic::evaluate not implemented");
         }
     };
@@ -77,7 +78,8 @@ namespace Utility
         float evaluate(float x) const override
         {
             // TODO: Return 1 / (1 + e^(-k*(x-0.5)))
-            // Use std::exp() for the exponential
+            // Use std::exp() for the exponential function
+            // Remember: m_k is the steepness parameter
             throw std::runtime_error("Logistic::evaluate not implemented");
         }
 
@@ -110,38 +112,48 @@ namespace Utility
         std::shared_ptr<ResponseCurve> m_curve;
     };
 
-    // Hunger: High hunger should score high (inverted)
+    // Hunger: When hungry (low value), eating should have high utility
     class HungerConsideration : public Consideration
     {
     public:
-        explicit HungerConsideration(std::shared_ptr<ResponseCurve> curve) : Consideration(std::move(curve)) {}
+        explicit HungerConsideration(std::shared_ptr<ResponseCurve> curve, bool inverted = true)
+            : Consideration(std::move(curve)), m_inverted(inverted) {}
 
         float evaluate(const CharacterContext &ctx) const override
         {
             // TODO:
-            // 1. Normalize hunger (0-100) to [0,1]
-            // 2. INVERT it: 1.0 - normalized (so low hunger = high score)
-            // 3. Apply the response curve
+            // 1. Normalize hunger (0-100) to [0,1] by dividing by 100.0f
+            // 2. If m_inverted is true, invert it: normalized = 1.0f - normalized
+            //    (This makes low hunger → high score, which triggers eating)
+            // 3. Apply the response curve: m_curve->evaluate(normalized)
             // 4. Return the result
             throw std::runtime_error("HungerConsideration::evaluate not implemented");
         }
+
+    private:
+        bool m_inverted;
     };
 
-    // Energy: Low energy should score high (inverted)
+    // Energy: When tired (low value), sleeping should have high utility
     class EnergyConsideration : public Consideration
     {
     public:
-        explicit EnergyConsideration(std::shared_ptr<ResponseCurve> curve) : Consideration(std::move(curve)) {}
+        explicit EnergyConsideration(std::shared_ptr<ResponseCurve> curve, bool inverted = true)
+            : Consideration(std::move(curve)), m_inverted(inverted) {}
 
         float evaluate(const CharacterContext &ctx) const override
         {
             // TODO:
-            // 1. Normalize energy (0-100) to [0,1]
-            // 2. INVERT it: 1.0 - normalized (so low energy = high score)
-            // 3. Apply the response curve
+            // 1. Normalize energy (0-100) to [0,1] by dividing by 100.0f
+            // 2. If m_inverted is true, invert it: normalized = 1.0f - normalized
+            //    (This makes low energy → high score, which triggers sleeping)
+            // 3. Apply the response curve: m_curve->evaluate(normalized)
             // 4. Return the result
             throw std::runtime_error("EnergyConsideration::evaluate not implemented");
         }
+
+    private:
+        bool m_inverted;
     };
 
     // Health: This one is NOT inverted by default - high health = high score
@@ -156,9 +168,11 @@ namespace Utility
         float evaluate(const CharacterContext &ctx) const override
         {
             // TODO:
-            // 1. Normalize health (0-100) to [0,1]
-            // 2. If m_inverted is true, invert it: 1.0 - normalized
-            // 3. Apply the response curve
+            // 1. Normalize health (0-100) to [0,1] by dividing by 100.0f
+            // 2. If m_inverted is true, invert it: normalized = 1.0f - normalized
+            //    - NOT inverted (false): high health → high score (for exploring)
+            //    - Inverted (true): low health → high score (for resting)
+            // 3. Apply the response curve: m_curve->evaluate(normalized)
             // 4. Return the result
             throw std::runtime_error("HealthConsideration::evaluate not implemented");
         }
@@ -184,10 +198,11 @@ namespace Utility
         float calculateUtility(const CharacterContext &ctx) const
         {
             // TODO: Implement IAUS multiplication approach
-            // Start with score = 1.0
-            // Multiply by each consideration's score
-            // If any consideration returns 0, the whole action scores 0 (veto behavior)
-            // Return the final score
+            // 1. Start with score = 1.0f
+            // 2. Loop through m_considerations vector
+            // 3. For each consideration, multiply score by consideration->evaluate(ctx)
+            // 4. Return the final score
+            // Note: If any consideration returns 0, the whole action scores 0 (veto behavior)
             throw std::runtime_error("Action::calculateUtility not implemented");
         }
 
@@ -236,10 +251,14 @@ namespace Utility
         std::shared_ptr<Action> selectBestAction(const CharacterContext &ctx) const
         {
             // TODO:
-            // 1. Loop through all actions
-            // 2. Calculate utility for each
-            // 3. Track the action with highest utility
-            // 4. Return that action (or nullptr if no actions)
+            // 1. If m_actions is empty, return nullptr
+            // 2. Initialize bestAction = nullptr and bestUtility = -1.0f
+            // 3. Loop through all actions in m_actions
+            // 4. For each action, calculate its utility: action->calculateUtility(ctx)
+            // 5. If utility >= bestUtility (use >= to prefer later actions on ties):
+            //    - Update bestUtility to this utility
+            //    - Update bestAction to this action
+            // 6. Return bestAction
             throw std::runtime_error("UtilityAI::selectBestAction not implemented");
         }
 
@@ -253,27 +272,38 @@ namespace Utility
     {
         auto ai = std::make_unique<UtilityAI>();
 
-        // TODO: Create and configure all four actions
+        // TODO: Create and configure all four actions in this order:
+        // Order matters for tie-breaking!
         //
-        // EatAction:
-        //   - Add HungerConsideration with InverseQuadratic curve
+        // 1. EatAction:
+        //    - Create with std::make_shared<EatAction>()
+        //    - Add HungerConsideration with InverseQuadratic curve (inverted by default)
+        //    - Add to ai with ai->addAction()
         //
-        // SleepAction:
-        //   - Add EnergyConsideration with InverseQuadratic curve
+        // 2. SleepAction:
+        //    - Create with std::make_shared<SleepAction>()
+        //    - Add EnergyConsideration with InverseQuadratic curve (inverted by default)
+        //    - Add to ai
         //
-        // ExploreAction:
-        //   - Add HealthConsideration (NOT inverted) with Quadratic curve
-        //   - Add EnergyConsideration (NOT inverted) with Quadratic curve
+        // 3. RestAction:
+        //    - Create with std::make_shared<RestAction>()
+        //    - Add HealthConsideration with InverseQuadratic curve
+        //    - IMPORTANT: Pass true as second argument to invert (low health = high score)
+        //    - Add to ai
         //
-        // RestAction:
-        //   - Add HealthConsideration (inverted=true) with InverseQuadratic curve
+        // 4. ExploreAction:
+        //    - Create with std::make_shared<ExploreAction>()
+        //    - Add HealthConsideration with Quadratic curve
+        //      IMPORTANT: Pass false as second argument (high health = high score)
+        //    - Add EnergyConsideration with Quadratic curve
+        //      IMPORTANT: Pass false as second argument (high energy = high score)
+        //    - Add to ai (add last so it wins ties when all stats are perfect)
         //
         // Example pattern:
-        // auto eatAction = std::make_shared<EatAction>();
-        // eatAction->addConsideration(
-        //     std::make_shared<HungerConsideration>(std::make_shared<InverseQuadratic>())
-        // );
-        // ai->addAction(eatAction);
+        //   auto eatAction = std::make_shared<EatAction>();
+        //   eatAction->addConsideration(
+        //       std::make_shared<HungerConsideration>(std::make_shared<InverseQuadratic>()));
+        //   ai->addAction(eatAction);
 
         return ai;
     }
