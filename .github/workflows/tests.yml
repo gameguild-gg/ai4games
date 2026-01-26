@@ -12,11 +12,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: [flocking, life, maze, rng, fsm]
+        module: [bt, flocking, fsm, life, maze, rng, utility]
         include:
+          - module: bt
+            test_executable: bt-tests
+            test_path: src/bt
           - module: flocking
             test_executable: flocking-tests
             test_path: src/flocking
+          - module: fsm
+            test_executable: fsm-tests
+            test_path: src/fsm
           - module: life
             test_executable: life-tests
             test_path: src/life
@@ -26,9 +32,9 @@ jobs:
           - module: rng
             test_executable: rng-tests
             test_path: src/rng
-          - module: fsm
-            test_executable: fsm-tests
-            test_path: src/fsm
+          - module: utility
+            test_executable: utility-tests
+            test_path: src/utility
 
     steps:
       - name: Checkout code
