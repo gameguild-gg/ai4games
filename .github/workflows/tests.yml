@@ -45,6 +45,11 @@ jobs:
         with:
           cmake-version: "3.20"
 
+      - name: Install SDL dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxext-dev libxrandr-dev libxrender-dev libxinerama-dev libxcursor-dev libxfixes-dev libxss-dev libxkbcommon-dev libwayland-dev libxi-dev libxtst-dev
+
       - name: Configure CMake
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release
